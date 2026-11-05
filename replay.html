@@ -3,10 +3,30 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="assets/style.css">
     <title>Document</title>
+    <link rel="stylesheet" href="assets/style.css">
 </head>
 <body>
-    <h1>Replay</h1>
+    <footer class="site-footer">
+        <div class="container footer-grid"><div>
+            <a class="brand" href="<?php echo esc_url(str27_language_url(str27_is_english()?'en':'fi')); ?>">STRIIMAAMO<span class="brand-dot">.</span></a>
+            <p>Tapahtumat ansaitsevat tulla nähdyiksi.<br>Monikameralähetykset, striimaukset ja videotuotannot.</p>
+        </div>
+        <div>
+            <h3>Tutustu</h3>
+            <a href="<?php echo esc_url(str27_link('palvelut')); ?>">Palvelut</a>
+            <a href="<?php echo esc_url(str27_link('tuotannot')); ?>">Tuotannot</a>
+            <a href="<?php echo esc_url(str27_link('replay')); ?>">Striimaamo Replay</a>
+        </div>
+        <div><h3>Ota yhteyttä</h3>
+            <a href="<?php echo esc_url(str27_link('yhteystiedot')); ?>">Yhteystiedot ja tarjouspyyntö</a>
+            <span><?php echo esc_html(str27_option('str27_contact_location','Palvelemme koko Suomessa')); ?></span>
+            <span>Kansainvälisten urheilutapahtumien tuotannot myös ulkomailla</span>
+            <a href="<?php echo esc_url(str27_link('tietosuoja')); ?>">Tietosuoja</a>
+        </div>
+    </div><div class="container footer-bottom">
+        <span>© <?php echo esc_html(date_i18n('Y')); ?> Striimaamo Oy</span>
+        <span>LIVE • STORIES • EXPERIENCES</span>
+    </div></footer><?php wp_footer(); ?>
 </body>
 </html>
