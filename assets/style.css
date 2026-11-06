@@ -277,4 +277,144 @@ h1, h2, h3 {
     .str27-languages {
         display: none;
     }
+
+}
+
+
+    .radio-option {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.form-card {
+    max-width: 500px;
+    width: 100%;
+    margin: 40px auto;
+    padding: 35px;
+    background: white;
+    border-radius: 16px;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+}
+
+.form-card h1 {
+    margin-bottom: 5px;
+}
+
+.form-description {
+    color: #777;
+    margin-bottom: 30px;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 20px;
+}
+
+.form-group label {
+    font-weight: bold;
+    margin-bottom: 8px;
+}
+
+.form-group input {
+    padding: 12px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-size: 16px;
+}
+
+.product-options {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin: 20px 0 25px;
+}
+
+.radio-option {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 15px;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.radio-option:hover {
+    border-color: var(--purple2);
+    background: rgba(129, 57, 245, 0.12);
+    color: var(--white);
+}
+
+.radio-option input {
+    accent-color: #7555cc;
+    width: 18px;
+    height: 18px;
+}
+
+.radio-option strong {
+    margin-left: 5px;
+}
+
+.form-card {
+    max-width: 500px;
+    width: 100%;
+    margin: 40px auto;
+    padding: 35px;
+    background: transparent;
+    border: 1px solid rgba(255, 255, 255, .09);
+    border-radius: 12px;
+}
+.form-group {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 20px;
+}
+
+.form-group input {
+    padding: 12px;
+    border-radius: 8px;
+}
+
+.product-options {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin: 20px 0;
+}
+
+.radio-option {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+.form-card button.btn-primary {
+    border: none !important;
+    box-shadow: none !important;
+    outline: none;
+}
+.form-card button {
+    display: block;
+    margin: 25px auto 0;
+}
+html, body {
+    min-height: 100%;
+}
+
+body {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+main {
+    flex: 1;
+}
+
+.site-footer {
+    margin-top: auto;
+}
+.replay-title {
+    margin-left: 50px !important;
 }

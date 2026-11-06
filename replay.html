@@ -20,29 +20,58 @@
 
     <main id="main">
 
-        <!-- Your homepage content goes here -->
+<div>
+    <h1 class="replay-title">Replay</h1>
 
-        <section class="hero">
-            <div class="container hero-grid">
-                <div>
-                    <h1>
-                        Replay
-                    </h1>
+    <div class="form-card">
 
+        <form action="yhteystiedot.html" method="GET">
 
-                    <p class="hero-lead">
-                        Monikameralähetykset, striimaukset ja videotuotannot.
-                    </p>
-
-                    <div class="actions">
-                        <a href="yhteystiedot.html"
-                           class="btn btn-primary">
-                            Pyydä tarjous
-                        </a>
-                    </div>
-                </div>
+            <!-- Tapahtuma -->
+            <div class="form-group">
+                <label for="fname">Tapahtuma</label>
+                <input type="text" id="fname" name="tapahtuma" required>
             </div>
-        </section>
+
+            <!-- Urheilija -->
+            <div class="form-group">
+                <label for="lname">Urheilija</label>
+                <input type="text" id="lname" name="urheilija" required>
+            </div>
+
+            <h3>Valitse tuote:</h3>
+
+            <!-- Tuotteet -->
+            <div class="product-options">
+                <label class="radio-option">
+                    <input type="radio" name="tuote" value="1 Kuva 10€" required>
+                    1 Kuva 10€
+                </label>
+
+                <label class="radio-option">
+                    <input type="radio" name="tuote" value="1 Kuva + 1 video 20€">
+                    1 Video 10€
+                </label>
+                <label class="radio-option">
+                    <input type="radio" name="tuote" value="1 Kuva + 1 video 20€">
+                    1 Kuva + 1 video 20€
+                </label>
+
+                <label class="radio-option">
+                    <input type="radio" name="tuote" value="2 kuvaa + 2 videota">
+                    2 kuvaa + 2 videota 30€
+                </label>
+            </div>
+
+            <button type="submit" class="btn btn-primary nav-cta">
+    Osta
+</button>
+
+        </form>
+
+    </div>
+</div>
+
 
     </main>
 
