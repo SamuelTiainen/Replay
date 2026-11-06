@@ -418,3 +418,59 @@ main {
 .replay-title {
     margin-left: 50px !important;
 }
+
+/* Ostettujen medioiden sivu */
+
+.media-page {
+    width: 100%;
+    padding: 30px 4%;
+    box-sizing: border-box;
+}
+
+.media-header {
+    margin-bottom: 30px;
+}
+
+.media-gallery {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 24px;
+}
+
+.media-card {
+    min-width: 0;
+}
+
+.media-card img {
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    object-fit: cover;
+    border-radius: 10px;
+    display: block;
+}
+
+.media-card h3 {
+    margin-bottom: 5px;
+}
+
+.media-card p {
+    margin-top: 5px;
+}
+
+.media-card a {
+    display: inline-block;
+    margin-top: 10px;
+}
+
+@media (max-width: 768px) {
+    .media-gallery {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 15px;
+    }
+}
+
+@media (max-width: 480px) {
+    .media-gallery {
+        grid-template-columns: 1fr;
+    }
+}
