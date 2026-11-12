@@ -217,11 +217,6 @@ def media(uid: str):
 
 from fastapi.middleware.cors import CORSMiddleware
 
-app = FastAPI(
-    title='Striimaamo Replay',
-    lifespan=lifespan
-)
-
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[
