@@ -1,4 +1,4 @@
-
+const API_BASE = "http://localhost:8000";
 document.addEventListener("DOMContentLoaded", async () => {
     const API_BASE = ""; // Sama verkkotunnus kuin Striimaamon sivuilla
 
