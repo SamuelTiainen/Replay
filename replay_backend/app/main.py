@@ -16,6 +16,7 @@ from fastapi import FastAPI, HTTPException
 from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
 from PIL import Image, ImageOps, UnidentifiedImageError
+from fastapi.middleware.cors import CORSMiddleware
 
 ROOT = Path(__file__).resolve().parents[1]
 DATA = Path(os.environ.get('REPLAY_DATA_DIR', str(ROOT / 'data'))).resolve()
@@ -165,7 +166,20 @@ async def lifespan(app):
 
 
 app = FastAPI(title='Striimaamo Replay – local demo', lifespan=lifespan)
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=[
+        "http://127.0.0.1:5500",
+        "http://localhost:5500",
+        "http://127.0.0.1:5501",
+        "http://localhost:5501"
+    ],
+    allow_credentials=False,
+    allow_methods=["GET"],
+    allow_headers=["*"]
+)
 app.mount('/static', StaticFiles(directory=STATIC), name='static')
+
 
 
 @app.get('/')
