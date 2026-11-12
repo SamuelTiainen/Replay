@@ -1,6 +1,28 @@
-const API_BASE = "http://localhost:8000";
+const API_BASE = "http://127.0.0.1:8000";
+
+
+// Replay Backend -yhteystesti
+async function testReplayConnection() {
+    try {
+        const response = await fetch(
+            `${API_BASE}/api/manifest`
+        );
+
+        if (!response.ok) {
+            throw new Error(`HTTP ${response.status}`);
+        }
+
+        const data = await response.json();
+
+        console.log("Replay Backend toimii:", data);
+
+    } catch (error) {
+        console.error("Replay Backend -yhteysvirhe:", error);
+    }
+}
+
+testReplayConnection();
 document.addEventListener("DOMContentLoaded", async () => {
-    const API_BASE = ""; // Sama verkkotunnus kuin Striimaamon sivuilla
 
     const params = new URLSearchParams(window.location.search);
 
