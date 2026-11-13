@@ -47,8 +47,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         return;
     }
 
-    selectedProduct.textContent =
-        "Valittu mediapaketti: " + product.name;
+   selectedProduct.textContent = product.name;
 
     // Palautetaan käyttäjän viimeksi käyttämät suodattimet.
     kindFilter.value = localStorage.getItem("replay-kind") || "all";
