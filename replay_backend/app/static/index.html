@@ -1,7 +1,7 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="fi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Striimaamo Replay – demo</title><link rel="stylesheet" href="/static/style.css"></head>
 <body><header><div class="brand">STRIIMAAMO <span>REPLAY</span></div><h1>Live-galleria</h1><p>Paikallinen kehitysversio – ei julkiseen käyttöön</p></header>
 <main><div class="toolbar"><label>Media <select id="kind"><option value="all">Kaikki</option><option value="photo">Valokuvat</option><option value="video">Videot</option></select></label><label>Järjestys <select id="order"><option value="new">Uusimmat ensin</option><option value="old">Vanhimmat ensin</option></select></label><span id="status" role="status">Ladataan…</span></div><div id="gallery" class="gallery"></div></main>
-<dialog id="viewer"><button id="close" aria-label="Sulje">Sulje ✕</button><div id="viewerContent"></div></dialog>
+<dialog id="viewer"><button type="button" id="close" aria-label="Sulje">Sulje ✕</button><div id="viewerContent"></div></dialog>
 <script src="/static/app.js" defer></script></body></html>
