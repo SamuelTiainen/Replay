@@ -35,17 +35,44 @@
                 <p id="selected-product"></p>
             </div>
 
+            <!-- Median suodatus ja järjestys -->
+            <div class="media-toolbar">
+
+                <label>
+                    Media
+                    <select id="kind">
+                        <option value="all">Kaikki</option>
+                        <option value="photo">Valokuvat</option>
+                        <option value="video">Videot</option>
+                    </select>
+                </label>
+
+                <label>
+                    Järjestys
+                    <select id="order">
+                        <option value="new">Uusimmat ensin</option>
+                        <option value="old">Vanhimmat ensin</option>
+                    </select>
+                </label>
+
+            </div>
+
+            <!-- Mediagalleria -->
             <div id="media-container" class="media-gallery">
                 <p>Ladataan ostettuja medioita...</p>
             </div>
 
- <dialog id="media-viewer" class="media-viewer">
-    <button type="button" id="close-viewer" class="close-viewer">
-        Sulje ✕
-    </button>
+            <!-- Median suurennusikkuna -->
+            <dialog id="media-viewer" class="media-viewer">
 
-    <div id="viewer-content" class="viewer-content"></div>
-</dialog>
+                <button type="button" id="close-viewer" class="close-viewer">
+                    Sulje ✕
+                </button>
+
+                <div id="viewer-content" class="viewer-content"></div>
+
+            </dialog>
+
         </section>
 
     </main>

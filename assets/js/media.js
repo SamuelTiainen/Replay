@@ -13,6 +13,9 @@ document.addEventListener("DOMContentLoaded", async () => {
     const selectedProduct = document.getElementById("selected-product");
     const mediaContainer = document.getElementById("media-container");
 
+    const kindFilter = document.getElementById("kind");
+    const orderFilter = document.getElementById("order");
+
     const dialog = document.getElementById("media-viewer");
     const viewerContent = document.getElementById("viewer-content");
     const closeViewer = document.getElementById("close-viewer");
@@ -46,6 +49,14 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     selectedProduct.textContent =
         "Valittu mediapaketti: " + product.name;
+
+    // Palautetaan käyttäjän viimeksi käyttämät suodattimet.
+    kindFilter.value = localStorage.getItem("replay-kind") || "all";
+
+    orderFilter.value =
+        localStorage.getItem("replay-order") === "old" ? "old" : "new";
+
+    let selectedMedia = [];
 
     function openViewer(item) {
         viewerContent.replaceChildren();
@@ -105,6 +116,41 @@ document.addEventListener("DOMContentLoaded", async () => {
         return button;
     }
 
+    // Näyttää valitun mediapaketin mediat suodattimien mukaan.
+    function renderMedia() {
+        let filtered = selectedMedia.filter(item =>
+            kindFilter.value === "all" || item.kind === kindFilter.value
+        );
+
+        // Manifesti tulee uusimmasta vanhimpaan.
+        if (orderFilter.value === "old") {
+            filtered = [...filtered].reverse();
+        }
+
+        mediaContainer.replaceChildren();
+
+        if (!filtered.length) {
+            mediaContainer.textContent =
+                "Valitulla suodattimella ei löytynyt medioita.";
+            return;
+        }
+
+        filtered.forEach(item => {
+            mediaContainer.appendChild(createMediaTile(item));
+        });
+    }
+
+    // Suodattimien muutokset.
+    kindFilter.addEventListener("change", () => {
+        localStorage.setItem("replay-kind", kindFilter.value);
+        renderMedia();
+    });
+
+    orderFilter.addEventListener("change", () => {
+        localStorage.setItem("replay-order", orderFilter.value);
+        renderMedia();
+    });
+
     mediaContainer.textContent = "Haetaan medioita...";
 
     try {
@@ -125,16 +171,9 @@ document.addEventListener("DOMContentLoaded", async () => {
         const selectedImages = images.slice(0, product.images);
         const selectedVideos = videos.slice(0, product.videos);
 
-        mediaContainer.replaceChildren();
+        selectedMedia = [...selectedImages, ...selectedVideos];
 
-        [...selectedImages, ...selectedVideos].forEach(item => {
-            mediaContainer.appendChild(createMediaTile(item));
-        });
-
-        if (!selectedImages.length && !selectedVideos.length) {
-            mediaContainer.textContent =
-                "Replay-palvelimella ei ole vielä sopivaa testimediaa.";
-        }
+        renderMedia();
 
     } catch (error) {
         console.error("Replay API -virhe:", error);
