@@ -24,6 +24,7 @@ INCOMING = Path(os.environ.get("REPLAY_INCOMING_DIR", str(ROOT / "incoming"))).r
 
 DB = DATA / "replay.sqlite3"
 STATIC = Path(__file__).resolve().parent / "static"
+PROJECT_ROOT = Path(__file__).resolve().parents[2]
 
 SUPPORTED = {
     ".jpg": "photo",
@@ -346,12 +347,36 @@ app.mount(
     StaticFiles(directory=STATIC),
     name="static"
 )
-
+app.mount(
+    "/assets",
+    StaticFiles(directory=PROJECT_ROOT / "assets"),
+    name="assets"
+)
 
 @app.get("/")
-def home():
-    return FileResponse(STATIC / "index.html")
+@app.get("/replay.html")
+async def serve_replay():
+    return FileResponse(PROJECT_ROOT / "replay.html")
 
+
+@app.get("/media.html")
+async def serve_media():
+    return FileResponse(PROJECT_ROOT / "media.html")
+
+
+@app.get("/header.html")
+async def serve_header():
+    return FileResponse(PROJECT_ROOT / "header.html")
+
+
+@app.get("/footer.html")
+async def serve_footer():
+    return FileResponse(PROJECT_ROOT / "footer.html")
+
+
+@app.get("/replay-demo")
+async def serve_replay_demo():
+    return FileResponse(STATIC / "index.html")
 
 @app.get("/api/health")
 def health():
