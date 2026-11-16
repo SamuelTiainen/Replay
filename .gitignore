@@ -1,0 +1,29 @@
+# Node.js
+node_modules/
+
+# Python
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+
+# Ympäristömuuttujat ja salaisuudet
+.env
+.env.*
+
+# Paikalliset tietokannat
+replay_backend/data/*.sqlite3
+replay_backend/data/*.db
+
+# Ladatut media- ja pikkukuvatiedostot
+replay_backend/data/media/
+replay_backend/data/thumbs/
+replay_backend/incoming/
+
+# Käyttölokit
+*.log
+
+# Käyttöjärjestelmien ja editorien väliaikaistiedostot
+.DS_Store
+Thumbs.db
+.vscode/

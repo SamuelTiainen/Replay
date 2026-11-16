@@ -24,19 +24,31 @@ async function loadLayout() {
         loadComponent("footer-placeholder", "footer.html")
     ]);
 
-    // Mobile menu
     const menuToggle = document.querySelector(".menu-toggle");
     const navigation = document.querySelector("#site-nav");
 
-    if (menuToggle && navigation) {
-        menuToggle.addEventListener("click", () => {
-            const isOpen =
-                menuToggle.getAttribute("aria-expanded") === "true";
-
-            menuToggle.setAttribute("aria-expanded", String(!isOpen));
-            navigation.classList.toggle("active", !isOpen);
-        });
+    if (!menuToggle || !navigation) {
+        console.warn("Mobiilivalikon elementtejä ei löytynyt.");
+        return;
     }
+
+    // Mobiilivalikon avaaminen ja sulkeminen
+    menuToggle.addEventListener("click", () => {
+        const isOpen =
+            menuToggle.getAttribute("aria-expanded") === "true";
+
+        menuToggle.setAttribute("aria-expanded", String(!isOpen));
+        navigation.classList.toggle("active", !isOpen);
+    });
+
+    // Suljetaan valikko navigointilinkkiä painettaessa
+    navigation.querySelectorAll("a").forEach(link => {
+        link.addEventListener("click", () => {
+            menuToggle.setAttribute("aria-expanded", "false");
+            navigation.classList.remove("active");
+        });
+    });
 }
 
 document.addEventListener("DOMContentLoaded", loadLayout);
+

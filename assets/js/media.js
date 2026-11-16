@@ -1,50 +1,38 @@
 
-document.addEventListener("DOMContentLoaded", () => {
+const API_BASE = "http://127.0.0.1:8000";
 
-    // 1. Luetaan Replay-sivulta välitetyt tiedot
+document.addEventListener("DOMContentLoaded", async () => {
     const params = new URLSearchParams(window.location.search);
 
     const tapahtuma = params.get("tapahtuma");
     const urheilija = params.get("urheilija");
     const tuote = params.get("tuote");
 
-    // 2. Haetaan HTML-elementit
     const eventName = document.getElementById("event-name");
     const athleteName = document.getElementById("athlete-name");
     const selectedProduct = document.getElementById("selected-product");
     const mediaContainer = document.getElementById("media-container");
 
-    // 3. Tarkistetaan hakutiedot
+    const kindFilter = document.getElementById("kind");
+    const orderFilter = document.getElementById("order");
+
+    const dialog = document.getElementById("media-viewer");
+    const viewerContent = document.getElementById("viewer-content");
+    const closeViewer = document.getElementById("close-viewer");
+
     if (!tapahtuma || !urheilija || !tuote) {
         mediaContainer.textContent =
             "Ostotiedot puuttuvat. Palaa takaisin Replay-sivulle.";
         return;
     }
 
-    // 4. Näytetään tapahtuman ja urheilijan tiedot
     eventName.textContent = tapahtuma;
     athleteName.textContent = urheilija;
 
-    // 5. Mediapakettien sisältö
     const products = {
-        kuva: {
-            name: "1 kuva - 10 €",
-            images: 1,
-            videos: 0
-        },
-
-        video: {
-            name: "1 video - 10 €",
-            images: 0,
-            videos: 1
-        },
-
-        kuva_video: {
-            name: "1 kuva + 1 video - 20 €",
-            images: 1,
-            videos: 1
-        },
-
+        kuva: { name: "1 kuva - 10 €", images: 1, videos: 0 },
+        video: { name: "1 video - 10 €", images: 0, videos: 1 },
+        kuva_video: { name: "1 kuva + 1 video - 20 €", images: 1, videos: 1 },
         "2kuvaa_2videota": {
             name: "2 kuvaa + 2 videota - 30 €",
             images: 2,
@@ -59,106 +47,138 @@ document.addEventListener("DOMContentLoaded", () => {
         return;
     }
 
-    selectedProduct.textContent =
-        "Ostettu mediapaketti: " + product.name;
+   selectedProduct.textContent = product.name;
 
-    // 6. Testimedia
-    // Nämä korvataan myöhemmin SharePointin tiedostoilla.
+    // Palautetaan käyttäjän viimeksi käyttämät suodattimet.
+    kindFilter.value = localStorage.getItem("replay-kind") || "all";
 
-    const testImages = [
-        {
-            title: "Ostettu kuva 1",
-            url: "https://placehold.co/800x450?text=Ostettu+kuva+1"
-        },
-        {
-            title: "Ostettu kuva 2",
-            url: "https://placehold.co/800x450?text=Ostettu+kuva+2"
-        }
-    ];
+    orderFilter.value =
+        localStorage.getItem("replay-order") === "old" ? "old" : "new";
 
-    const testVideos = [
-        {
-            title: "Ostettu video 1",
-            preview: "https://placehold.co/800x450?text=Videon+esikatselu+1",
-            url: ""
-        },
-        {
-            title: "Ostettu video 2",
-            preview: "https://placehold.co/800x450?text=Videon+esikatselu+2",
-            url: ""
-        }
-    ];
+    let selectedMedia = [];
 
-    // 7. Tyhjennetään mediagalleria
-    mediaContainer.innerHTML = "";
+    function openViewer(item) {
+        viewerContent.replaceChildren();
 
-    // 8. Luodaan mediakortti
-    function createMediaCard(title, preview, type, downloadUrl) {
+        const element = document.createElement(
+            item.kind === "video" ? "video" : "img"
+        );
 
-        const card = document.createElement("article");
-        card.className = "media-card";
+        element.src = `${API_BASE}${item.preview}`;
 
-        const image = document.createElement("img");
-        image.src = preview;
-        image.alt = title;
-
-        const heading = document.createElement("h3");
-        heading.textContent = title;
-
-        const description = document.createElement("p");
-        description.textContent =
-            type === "video" ? "MP4-video" : "JPEG-kuva";
-
-        card.appendChild(image);
-        card.appendChild(heading);
-        card.appendChild(description);
-
-        if (downloadUrl) {
-            const download = document.createElement("a");
-
-            download.href = downloadUrl;
-            download.textContent = "Lataa media";
-            download.className = "btn btn-primary";
-            download.download = "";
-
-            card.appendChild(download);
+        if (item.kind === "video") {
+            element.controls = true;
+            element.autoplay = false;
+            element.preload = "metadata";
         } else {
-            const info = document.createElement("p");
-            info.textContent = "Alkuperäisen median lataus lisätään myöhemmin.";
-            card.appendChild(info);
+            element.alt = item.filename;
         }
 
-        return card;
+        viewerContent.appendChild(element);
+        dialog.showModal();
     }
 
-    // 9. Näytetään pakettiin kuuluvat kuvat
-    for (let i = 0; i < product.images; i++) {
+    closeViewer.addEventListener("click", () => dialog.close());
 
-        const media = testImages[i];
+    dialog.addEventListener("close", () => {
+        viewerContent.replaceChildren();
+    });
 
-        mediaContainer.appendChild(
-            createMediaCard(
-                media.title,
-                media.url,
-                "image",
-                ""
-            )
+    function createMediaTile(item) {
+        const button = document.createElement("button");
+        button.className = "media-tile";
+        button.type = "button";
+
+        if (item.thumb) {
+            const image = document.createElement("img");
+            image.src = `${API_BASE}${item.thumb}`;
+            image.alt = item.filename;
+            image.loading = "lazy";
+            button.appendChild(image);
+        } else {
+            const placeholder = document.createElement("div");
+            placeholder.className = "media-placeholder";
+            placeholder.textContent =
+                item.kind === "video" ? "▶" : "KUVA";
+            button.appendChild(placeholder);
+        }
+
+        const meta = document.createElement("span");
+        meta.className = "media-meta";
+        meta.textContent =
+            `${item.kind === "photo" ? "KUVA" : "VIDEO"} · ${item.filename}`;
+
+        button.appendChild(meta);
+
+        button.addEventListener("click", () => openViewer(item));
+
+        return button;
+    }
+
+    // Näyttää valitun mediapaketin mediat suodattimien mukaan.
+    function renderMedia() {
+        let filtered = selectedMedia.filter(item =>
+            kindFilter.value === "all" || item.kind === kindFilter.value
         );
+
+        // Manifesti tulee uusimmasta vanhimpaan.
+        if (orderFilter.value === "old") {
+            filtered = [...filtered].reverse();
+        }
+
+        mediaContainer.replaceChildren();
+
+        if (!filtered.length) {
+            mediaContainer.textContent =
+                "Valitulla suodattimella ei löytynyt medioita.";
+            return;
+        }
+
+        filtered.forEach(item => {
+            mediaContainer.appendChild(createMediaTile(item));
+        });
     }
 
-    // 10. Näytetään pakettiin kuuluvat videot
-    for (let i = 0; i < product.videos; i++) {
+    // Suodattimien muutokset.
+    kindFilter.addEventListener("change", () => {
+        localStorage.setItem("replay-kind", kindFilter.value);
+        renderMedia();
+    });
 
-        const media = testVideos[i];
+    orderFilter.addEventListener("change", () => {
+        localStorage.setItem("replay-order", orderFilter.value);
+        renderMedia();
+    });
 
-        mediaContainer.appendChild(
-            createMediaCard(
-                media.title,
-                media.preview,
-                "video",
-                media.url
-            )
-        );
+    mediaContainer.textContent = "Haetaan medioita...";
+
+    try {
+        const response = await fetch(`${API_BASE}/api/manifest`, {
+            cache: "no-store"
+        });
+
+        if (!response.ok) {
+            throw new Error(`HTTP ${response.status}`);
+        }
+
+        const manifest = await response.json();
+        const allMedia = manifest.photos || [];
+
+        const images = allMedia.filter(item => item.kind === "photo");
+        const videos = allMedia.filter(item => item.kind === "video");
+
+        const selectedImages = images.slice(0, product.images);
+        const selectedVideos = videos.slice(0, product.videos);
+
+        selectedMedia = [...selectedImages, ...selectedVideos];
+
+        renderMedia();
+
+    } catch (error) {
+        console.error("Replay API -virhe:", error);
+
+        mediaContainer.textContent =
+            "Median hakeminen epäonnistui. Tarkista Replay-palvelimen toiminta.";
     }
-
 });
+
