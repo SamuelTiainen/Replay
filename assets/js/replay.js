@@ -378,8 +378,14 @@ function renderMedia(mediaItems) {
         const filename = document.createElement("p");
         filename.textContent = item.filename;
 
-        card.appendChild(preview);
+       
+card.appendChild(preview);
 card.appendChild(filename);
+
+// Hinta
+const priceLabel = document.createElement("span");
+priceLabel.className = "replay-media-price";
+priceLabel.textContent = euroFormat.format(MEDIA_PRICE);
 
 // Ostoskoripainike
 const cartButton = document.createElement("button");
@@ -405,8 +411,16 @@ cartButton.addEventListener("click", event => {
     toggleCart(item);
 });
 
-card.appendChild(cartButton);
+// Hinta ja painike samalle riville
+const actionRow = document.createElement("div");
+actionRow.className = "replay-media-actions";
+
+actionRow.appendChild(priceLabel);
+actionRow.appendChild(cartButton);
+
+card.appendChild(actionRow);
 grid.appendChild(card);
+
 
         card.addEventListener("click", () => {
             openMediaViewer(item);
