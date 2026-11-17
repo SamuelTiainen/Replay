@@ -642,7 +642,12 @@ h3 {
 
 /* WATCH-alue */
 
+
+/* WATCH-alue */
+
 .replay-media-area {
+    width: 100%;
+    min-width: 0;
     min-height: 350px;
 }
 
@@ -652,7 +657,11 @@ h3 {
     display: flex;
     flex-direction: column;
     justify-content: center;
-    background: linear-gradient(125deg, rgba(129, 57, 245, .25), rgba(17, 24, 49, .3));
+    background: linear-gradient(
+        125deg,
+        rgba(129, 57, 245, .25),
+        rgba(17, 24, 49, .3)
+    );
     border-radius: 12px;
 }
 
@@ -677,16 +686,50 @@ h3 {
     margin-top: 22px;
 }
 
+/* Mediagalleria */
+
 .replay-media-grid {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 14px;
-    margin-top: 18px;
+    width: 100%;
+    min-width: 0;
+    margin-top: 0;
 }
 
 .replay-media-grid:empty {
     display: none;
 }
+
+/* Yhtenäiset mediakortit */
+
+.replay-media-card {
+    width: 100%;
+    min-width: 0;
+    overflow: hidden;
+    background: var(--navy2);
+    border: 1px solid rgba(255, 255, 255, .1);
+    border-radius: 10px;
+}
+
+.replay-media-card img,
+.replay-media-card video {
+    display: block;
+    width: 100%;
+    height: 145px;
+    object-fit: cover;
+    background: #000;
+}
+
+.replay-media-card p {
+    margin: 0;
+    padding: 9px;
+    color: var(--muted);
+    font-size: 11px;
+    line-height: 1.4;
+    overflow-wrap: anywhere;
+}
+
 
 /* KEEP / ostoskori */
 
@@ -860,36 +903,282 @@ h3 {
     }
 }
 
-/* Replay-gallerian yhtenäiset mediakortit */
+@media (max-width: 480px) {
+    .replay-media-grid {
+        grid-template-columns: 1fr;
+    }
 
-.replay-media-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
-    gap: 16px;
+    .replay-media-card img,
+    .replay-media-card video {
+        height: 190px;
+    }
+}
+
+
+/* REPLAY – mediagallerian lopullinen asettelukorjaus */
+
+.replay-watch {
+    min-width: 0 !important;
+    overflow: hidden;
+}
+
+.replay-media-area {
+    display: block !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+    overflow: hidden !important;
+}
+
+#replay-media-grid {
+    display: grid !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 14px !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+    box-sizing: border-box !important;
+}
+
+#replay-media-grid .replay-media-card {
+    display: block !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+    overflow: hidden !important;
+    box-sizing: border-box !important;
+}
+
+#replay-media-grid .replay-media-card img,
+#replay-media-grid .replay-media-card video {
+    display: block !important;
+    width: 100% !important;
+    height: 160px !important;
+    max-width: 100% !important;
+    object-fit: cover !important;
+    box-sizing: border-box !important;
+}
+
+#replay-media-grid .replay-media-card p {
+    width: 100% !important;
+    min-width: 0 !important;
+    margin: 0 !important;
+    padding: 10px !important;
+    overflow-wrap: anywhere !important;
+    box-sizing: border-box !important;
+}
+
+@media (max-width: 600px) {
+    #replay-media-grid {
+        grid-template-columns: 1fr !important;
+    }
+}
+
+
+/* Mediakortin esikatselu */
+
+.replay-media-preview {
+    position: relative;
     width: 100%;
+    height: 160px;
+    overflow: hidden;
+    background: #080d1d;
+    cursor: pointer;
+}
+
+.replay-media-preview img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.replay-video-fallback {
+    display: none;
+    position: absolute;
+    inset: 0;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 18px;
+    font-weight: 700;
+}
+
+.replay-video-play {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: rgba(129, 57, 245, .9);
+    color: white;
+    font-size: 20px;
+    pointer-events: none;
 }
 
 .replay-media-card {
-    min-width: 0;
-    overflow: hidden;
+    cursor: pointer;
+}
+
+.replay-media-card:focus-visible {
+    outline: 2px solid var(--purple2);
+    outline-offset: 3px;
+}
+
+/* Suuri katseluikkuna */
+
+.replay-media-viewer {
+    width: min(1100px, 92vw);
+    max-width: 92vw;
+    max-height: 90vh;
+    padding: 0;
+    border: 1px solid var(--purple);
     border-radius: 12px;
-    background: var(--navy2);
-    border: 1px solid rgba(255, 255, 255, 0.08);
+    background: #080d1d;
+    color: white;
+    overflow: auto;
 }
 
-.replay-media-card img,
-.replay-media-card video {
+.replay-media-viewer::backdrop {
+    background: rgba(0, 0, 0, .88);
+}
+
+.replay-viewer-inner {
+    position: relative;
+    padding: 42px 16px 16px;
+}
+
+.replay-viewer-close {
+    position: absolute;
+    top: 7px;
+    right: 12px;
+    width: 34px;
+    height: 34px;
+    border: 0;
+    border-radius: 50%;
+    background: var(--purple);
+    color: white;
+    font-size: 25px;
+    cursor: pointer;
+}
+
+#replay-viewer-content {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#replay-viewer-content img,
+#replay-viewer-content video {
     display: block;
-    width: 100%;
-    height: 170px;
-    object-fit: cover;
-    background: #000;
+    max-width: 100%;
+    max-height: 78vh;
+    width: auto;
+    height: auto;
+    object-fit: contain;
+    border-radius: 6px;
 }
 
-.replay-media-card p {
-    padding: 10px;
-    margin: 0;
+@media (max-width: 600px) {
+    .replay-media-preview {
+        height: 190px;
+    }
+
+    .replay-media-viewer {
+        width: 96vw;
+        max-width: 96vw;
+    }
+}
+
+
+/* Suuren median katseluikkunan viimeistely */
+
+.replay-media-viewer {
+    border: none !important;
+    border-radius: 8px;
+}
+
+/* Sulkemismerkki ilman ympyrää */
+
+.replay-viewer-close {
+    position: absolute;
+    top: 5px;
+    right: 8px;
+    width: 36px;
+    height: 36px;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    border-radius: 0;
+    background: transparent;
+    color: white;
+    font-size: 30px;
+    font-weight: 400;
+    line-height: 1;
+    cursor: pointer;
+}
+
+.replay-viewer-close:hover {
+    color: var(--purple2);
+}
+
+
+/* Replay – ostoskoripainikkeet */
+
+.replay-add-to-cart {
+    display: block;
+    width: calc(100% - 16px);
+    margin: 8px;
+    padding: 10px 8px;
+    border: 1px solid var(--purple);
+    border-radius: 7px;
+    background: var(--purple);
+    color: white;
+    font-family: inherit;
     font-size: 12px;
-    color: var(--muted);
+    font-weight: 700;
+    cursor: pointer;
+    transition: background .2s, border-color .2s;
+}
+
+.replay-add-to-cart:hover {
+    background: var(--purple2);
+}
+
+.replay-add-to-cart.in-cart {
+    background: transparent;
+    border-color: var(--purple2);
+    color: var(--purple2);
+}
+
+/* Ostoskorin rivit */
+
+.replay-cart-item {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto auto;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 0;
+    border-bottom: 1px solid rgba(255, 255, 255, .1);
+    font-size: 12px;
+}
+
+.replay-cart-item span {
+    min-width: 0;
     overflow-wrap: anywhere;
+}
+
+.replay-cart-item button {
+    border: none;
+    background: transparent;
+    color: var(--purple2);
+    font: inherit;
+    cursor: pointer;
 }
