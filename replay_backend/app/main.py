@@ -1,5 +1,8 @@
 
 """Local-only photo/video gallery proof of concept; not a production storefront."""
+
+
+
 from __future__ import annotations
 
 import hashlib
@@ -43,8 +46,6 @@ def connect():
     db.row_factory = sqlite3.Row
     db.execute("PRAGMA foreign_keys = ON")
     return db
-
-
 def setup():
     for folder in (DATA, INCOMING, DATA / "thumbs", DATA / "media"):
         folder.mkdir(parents=True, exist_ok=True)
@@ -74,16 +75,109 @@ def setup():
             )
         """)
 
-        # Muut kolme CREATE TABLE -komentoa tulevat tähän
-        # samalla sisennyksellä kuin events-komento.
+        
+        db.execute("""
+            CREATE TABLE IF NOT EXISTS athletes (
+                id TEXT PRIMARY KEY,
+                name TEXT NOT NULL,
+                created_at TEXT NOT NULL
+            )
+        """)
+
+        db.execute("""
+            CREATE TABLE IF NOT EXISTS event_athletes (
+                event_id TEXT NOT NULL,
+                athlete_id TEXT NOT NULL,
+                bib_number TEXT NOT NULL,
+                PRIMARY KEY (event_id, athlete_id),
+                UNIQUE (event_id, bib_number),
+                FOREIGN KEY (event_id) REFERENCES events(id),
+                FOREIGN KEY (athlete_id) REFERENCES athletes(id)
+            )
+        """)
+
+        db.execute("""
+            CREATE TABLE IF NOT EXISTS media_athletes (
+                media_id TEXT NOT NULL,
+                event_id TEXT NOT NULL,
+                athlete_id TEXT NOT NULL,
+                PRIMARY KEY (media_id, event_id, athlete_id),
+                FOREIGN KEY (media_id) REFERENCES media(id),
+                FOREIGN KEY (event_id, athlete_id)
+                    REFERENCES event_athletes(event_id, athlete_id)
+            )
+        """)
+
+        db.execute("""
+            CREATE INDEX IF NOT EXISTS idx_athletes_name
+            ON athletes(name)
+        """)
+
 
         db.commit()
+        link_media_to_athletes()
 
     print("[REPLAY] ROOT:", ROOT, flush=True)
     print("[REPLAY] DATA:", DATA, flush=True)
     print("[REPLAY] INCOMING:", INCOMING, flush=True)
     print("[REPLAY] INCOMING EXISTS:", INCOMING.exists(), flush=True)
 
+
+def link_media_to_athletes():
+    with connect() as db:
+        media_rows = db.execute(
+            "SELECT id, filename FROM media"
+        ).fetchall()
+
+        events = db.execute(
+            "SELECT id, event_date FROM events WHERE event_date IS NOT NULL"
+        ).fetchall()
+
+        for media in media_rows:
+            parts = Path(media["filename"]).stem.split("_")
+
+            if len(parts) < 3:
+                continue
+
+            date_text = parts[0]
+            bib_number = parts[1]
+
+            if len(date_text) != 8 or not date_text.isdigit():
+                continue
+
+            try:
+                media_date = datetime.strptime(
+                    date_text, "%Y%m%d"
+                ).date().isoformat()
+            except ValueError:
+                continue
+
+            for event in events:
+                if event["event_date"] != media_date:
+                    continue
+
+                athlete = db.execute(
+                    """
+                    SELECT athlete_id
+                    FROM event_athletes
+                    WHERE event_id = ? AND bib_number = ?
+                    """,
+                    (event["id"], bib_number)
+                ).fetchone()
+
+                if not athlete:
+                    continue
+
+                db.execute(
+                    """
+                    INSERT OR IGNORE INTO media_athletes
+                    (media_id, event_id, athlete_id)
+                    VALUES (?, ?, ?)
+                    """,
+                    (media["id"], event["id"], athlete["athlete_id"])
+                )
+
+        db.commit()
 
 def file_digest(path):
     digest = hashlib.sha256()
@@ -144,11 +238,28 @@ def ingest(path: Path):
                 if existing["thumb_file"] else None
             )
 
+            
             if existing_media.is_file() and (
                 existing_thumb is None or existing_thumb.is_file()
             ):
-                print(f"[REPLAY] Already imported: {path.name}", flush=True)
+                # Päivitetään tietokannan tiedostonimi,
+                # jos tiedosto on nimetty uudelleen.
+                with connect() as db:
+                    db.execute(
+                        "UPDATE media SET filename=? WHERE id=?",
+                        (path.name, existing["id"])
+                    )
+                    db.commit()
+
+                print(
+                    f"[REPLAY] Updated filename: {path.name}",
+                    flush=True
+                )
+
+                link_media_to_athletes()
+                
                 return False
+
 
             with connect() as db:
                 db.execute(
@@ -265,6 +376,8 @@ def ingest(path: Path):
             f"[REPLAY] Added {kind}: {path.name}",
             flush=True
         )
+
+        link_media_to_athletes()
 
         return True
 
@@ -438,6 +551,155 @@ def create_event(event: EventCreate):
         "event_date": event.event_date.isoformat() if event.event_date else None
     }
 
+class AthleteCreate(BaseModel):
+    name: str
+    bib_number: str
+
+
+@app.post("/api/events/{event_id}/athletes")
+def create_athlete(event_id: str, athlete: AthleteCreate):
+    name = athlete.name.strip()
+    bib_number = athlete.bib_number.strip()
+
+    if not name or not bib_number:
+        raise HTTPException(400, "Nimi tai kilpailunumero puuttuu.")
+
+    with connect() as db:
+        event = db.execute(
+            "SELECT id FROM events WHERE id=?",
+            (event_id,)
+        ).fetchone()
+
+        if not event:
+            raise HTTPException(404, "Tapahtumaa ei löydy.")
+
+        athlete_id = uuid.uuid4().hex
+        created_at = datetime.now(timezone.utc).isoformat()
+
+        try:
+            db.execute(
+                """
+                INSERT INTO athletes (id, name, created_at)
+                VALUES (?, ?, ?)
+                """,
+                (athlete_id, name, created_at)
+            )
+
+            db.execute(
+                """
+                INSERT INTO event_athletes
+                (event_id, athlete_id, bib_number)
+                VALUES (?, ?, ?)
+                """,
+                (event_id, athlete_id, bib_number)
+            )
+
+        except sqlite3.IntegrityError:
+            raise HTTPException(
+                409,
+                "Tämä kilpailunumero on jo käytössä tässä tapahtumassa."
+            )
+
+    return {
+        "id": athlete_id,
+        "name": name,
+        "bib_number": bib_number,
+        "event_id": event_id
+    }
+
+
+@app.get("/api/events/{event_id}/athletes/media")
+def get_athlete_media(event_id: str):
+    with connect() as db:
+        rows = db.execute(
+            """
+            SELECT
+                a.name,
+                ea.bib_number,
+                COUNT(DISTINCT ma.media_id) AS media_count,
+                GROUP_CONCAT(DISTINCT m.filename) AS filenames
+            FROM event_athletes ea
+            JOIN athletes a ON a.id = ea.athlete_id
+            LEFT JOIN media_athletes ma
+                ON ma.event_id = ea.event_id
+                AND ma.athlete_id = ea.athlete_id
+            LEFT JOIN media m ON m.id = ma.media_id
+            WHERE ea.event_id = ?
+            GROUP BY a.id, a.name, ea.bib_number
+            ORDER BY ea.bib_number
+            """,
+            (event_id,)
+        ).fetchall()
+
+    return {
+        "athletes": [dict(row) for row in rows]
+    }
+
+
+# Haetaan valitun tapahtuman osallistujat
+@app.get("/api/events/{event_id}/athletes")
+def get_event_athletes(event_id: str, search: str = ""):
+    with connect() as db:
+        rows = db.execute(
+            """
+            SELECT
+                a.id,
+                a.name,
+                ea.bib_number
+            FROM event_athletes ea
+            JOIN athletes a ON a.id = ea.athlete_id
+            WHERE ea.event_id = ?
+            AND a.name LIKE ?
+            ORDER BY a.name
+            """,
+            (event_id, f"%{search.strip()}%")
+        ).fetchall()
+
+    return {
+        "athletes": [dict(row) for row in rows]
+    }
+
+
+# Haetaan valitun osallistujan kuvat ja videot
+@app.get("/api/events/{event_id}/athletes/{athlete_id}/media")
+def get_athlete_media_items(event_id: str, athlete_id: str):
+    with connect() as db:
+        rows = db.execute(
+            """
+            SELECT
+                m.id,
+                m.filename,
+                m.kind,
+                m.created_at,
+                m.thumb_file
+            FROM media_athletes ma
+            JOIN media m ON m.id = ma.media_id
+            WHERE ma.event_id = ?
+            AND ma.athlete_id = ?
+            ORDER BY m.created_at DESC
+            """,
+            (event_id, athlete_id)
+        ).fetchall()
+
+    media_items = []
+
+    for row in rows:
+        media_items.append({
+            "id": row["id"],
+            "filename": row["filename"],
+            "kind": row["kind"],
+            "created_at": row["created_at"],
+            "thumb": (
+                f"/api/thumb/{row['id']}"
+                if row["thumb_file"] else None
+            ),
+            "preview": f"/api/media/{row['id']}"
+        })
+
+    return {
+        "media": media_items
+    }
+
 @app.get("/api/manifest")
 def manifest():
     with connect() as db:
@@ -538,5 +800,3 @@ def media(uid: str):
         path,
         media_type=kind
     )
-
-
