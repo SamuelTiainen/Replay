@@ -474,3 +474,336 @@ main {
         grid-template-columns: 1fr;
     }
 }
+
+/* =========================================
+   REPLAY – UUSI KOLMIVAIHEINEN NÄKYMÄ
+========================================= */
+
+.replay-page {
+    width: min(1440px, calc(100% - 52px));
+    margin: 65px auto 60px;
+}
+
+/* Yläosan esittelytekstit */
+
+.replay-hero {
+    max-width: 850px;
+    margin-bottom: 60px;
+}
+
+.replay-eyebrow {
+    color: var(--purple2);
+    font-size: 13px;
+    font-weight: 800;
+    letter-spacing: 2px;
+    margin-bottom: 22px;
+}
+
+.replay-hero h1 {
+    font-size: clamp(48px, 6vw, 76px);
+    line-height: 1.08;
+    letter-spacing: -3px;
+    margin: 0 0 24px;
+    color: var(--white);
+}
+
+.replay-hero h1 span {
+    display: block;
+    color: var(--purple2);
+}
+
+.replay-lead {
+    max-width: 700px;
+    color: var(--muted);
+    font-size: 19px;
+    line-height: 1.7;
+}
+
+/* Päälaatikko */
+
+.replay-workspace {
+    border: 1px solid rgba(160, 106, 255, 0.55);
+    border-radius: 20px;
+    overflow: hidden;
+    background: var(--navy2);
+    box-shadow: 0 20px 70px rgba(0, 0, 0, 0.2);
+}
+
+.replay-workspace-header {
+    min-height: 56px;
+    padding: 0 26px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.13);
+}
+
+.replay-brand-label {
+    display: flex;
+    align-items: center;
+    gap: 13px;
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: 1px;
+}
+
+.replay-status-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: #ff477e;
+}
+
+.replay-preview-label {
+    color: var(--purple2);
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 1px;
+}
+
+/* Kolme pääosiota */
+
+.replay-workspace-content {
+    display: grid;
+    grid-template-columns: minmax(220px, 0.85fr)
+                           minmax(400px, 1.7fr)
+                           minmax(230px, 0.9fr);
+    min-height: 510px;
+}
+
+.replay-panel {
+    min-width: 0;
+    padding: 30px;
+}
+
+.replay-find,
+.replay-keep {
+    background: #111831;
+}
+
+.replay-watch {
+    background:
+        radial-gradient(
+            circle at 50% 50%,
+            rgba(129, 57, 245, 0.25),
+            transparent 70%
+        ),
+        #1b2448;
+}
+
+.replay-step-number {
+    color: var(--purple2);
+    font-size: 13px;
+    margin-bottom: 9px;
+}
+
+.replay-panel h2 {
+    font-size: 21px;
+    margin: 0 0 8px;
+    color: var(--white);
+}
+
+.replay-panel-description {
+    color: var(--muted);
+    font-size: 12px;
+    line-height: 1.6;
+    margin-bottom: 28px;
+}
+
+/* FIND – hakukentät */
+
+.replay-field {
+    margin-bottom: 20px;
+}
+
+.replay-field label {
+    display: block;
+    color: var(--white);
+    font-size: 13px;
+    font-weight: 600;
+    margin-bottom: 9px;
+}
+
+.replay-field input,
+.replay-field select {
+    width: 100%;
+    min-height: 45px;
+    padding: 11px 12px;
+    color: var(--white);
+    background: var(--navy);
+    border: 1px solid rgba(160, 106, 255, 0.3);
+    border-radius: 8px;
+    font: inherit;
+    font-size: 13px;
+}
+
+.replay-field input:focus,
+.replay-field select:focus {
+    outline: none;
+    border-color: var(--purple2);
+}
+
+.replay-field select option {
+    background: var(--navy);
+    color: var(--white);
+}
+
+.athlete-results {
+    color: var(--muted);
+    font-size: 12px;
+    line-height: 1.6;
+}
+
+/* WATCH – media-alue */
+
+.replay-media-area {
+    min-height: 350px;
+}
+
+.replay-media-empty {
+    min-height: 350px;
+    padding: 35px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    background:
+        linear-gradient(
+            125deg,
+            rgba(129, 57, 245, 0.25),
+            rgba(17, 24, 49, 0.3)
+        );
+    border-radius: 12px;
+}
+
+.replay-play-icon {
+    color: var(--purple2);
+    font-size: 35px;
+    margin-bottom: 20px;
+}
+
+.replay-media-empty h3 {
+    font-size: clamp(26px, 3vw, 44px);
+    line-height: 1.12;
+    letter-spacing: -1.5px;
+    margin: 0;
+}
+
+.replay-media-empty p {
+    max-width: 340px;
+    color: var(--muted);
+    font-size: 13px;
+    line-height: 1.6;
+    margin-top: 22px;
+}
+
+/* Media-korttien tuleva ruudukko */
+
+.replay-media-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 14px;
+    margin-top: 18px;
+}
+
+.replay-media-grid:empty {
+    display: none;
+}
+
+/* KEEP – ostoskori */
+
+.replay-cart {
+    padding: 18px;
+    background: var(--navy);
+    border: 1px solid rgba(160, 106, 255, 0.3);
+    border-radius: 10px;
+}
+
+.replay-cart h3 {
+    font-size: 17px;
+    margin: 0 0 20px;
+}
+
+.replay-cart-items {
+    color: var(--muted);
+    font-size: 12px;
+    line-height: 1.6;
+    min-height: 55px;
+}
+
+.replay-cart-total {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+    padding-top: 16px;
+    margin-top: 12px;
+    border-top: 1px solid rgba(255, 255, 255, 0.15);
+    font-size: 13px;
+}
+
+.replay-cart-total strong {
+    color: var(--purple2);
+    font-size: 21px;
+}
+
+.replay-checkout {
+    width: 100%;
+    margin-top: 22px;
+}
+
+.replay-checkout:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+}
+
+/* Mobiilinäkymä */
+
+@media (max-width: 1050px) {
+    .replay-workspace-content {
+        grid-template-columns: 1fr 1.5fr;
+    }
+
+    .replay-keep {
+        grid-column: 1 / -1;
+    }
+}
+
+@media (max-width: 700px) {
+    .replay-page {
+        width: calc(100% - 30px);
+        margin-top: 40px;
+    }
+
+    .replay-hero {
+        margin-bottom: 35px;
+    }
+
+    .replay-hero h1 {
+        font-size: 46px;
+        letter-spacing: -2px;
+    }
+
+    .replay-lead {
+        font-size: 16px;
+    }
+
+    .replay-workspace-content {
+        grid-template-columns: 1fr;
+    }
+
+    .replay-panel {
+        padding: 24px;
+    }
+
+    .replay-keep {
+        grid-column: auto;
+    }
+
+    .replay-workspace-header {
+        padding: 0 15px;
+    }
+
+    .replay-preview-label {
+        font-size: 9px;
+    }
+}
