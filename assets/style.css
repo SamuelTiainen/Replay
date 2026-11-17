@@ -394,6 +394,8 @@ h3 {
     border: 1px solid rgba(255, 255, 255, .1);
     border-radius: 10px;
     cursor: pointer;
+    height: 239px;
+min-height: 239px;
 }
 
 .media-tile:hover {
@@ -420,10 +422,17 @@ h3 {
 
 .media-meta,
 .media-tile .media-meta {
-    display: block;
-    padding: 12px;
-    font-size: .85rem;
+    display: flex;
+    align-items: center;
+    width: 100%;
+    height: 80px;
+    min-height: 80px;
+    padding: 8px 10px;
+    box-sizing: border-box;
     overflow-wrap: anywhere;
+    white-space: normal;
+    line-height: 1.3;
+    text-align: left;
 }
 
 /* Suurennusikkuna */
@@ -1267,4 +1276,157 @@ h3 {
     padding: 9px 12px;
     font-size: 11px;
     white-space: nowrap;
+}
+
+
+
+/* Oma media: yhtenäiset mediakortit */
+
+.media-item {
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+.media-tile {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: 255px;
+    min-height: 255px;
+    padding: 0;
+    overflow: hidden;
+    box-sizing: border-box;
+    flex-shrink: 0;
+}
+
+.media-tile img {
+    display: block;
+    width: 100%;
+    height: 175px;
+    min-height: 175px;
+    flex: 0 0 175px;
+    object-fit: cover;
+}
+
+/* Tiedostonimi */
+
+.media-tile .media-meta {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    height: 80px;
+    min-height: 80px;
+    flex: 0 0 80px;
+    padding: 8px 10px;
+    box-sizing: border-box;
+    overflow-wrap: anywhere;
+    white-space: normal;
+    line-height: 1.3;
+    text-align: left;
+    font-size: 14px;
+    font-weight: 400;
+}
+
+/* Videon play-kuvake */
+
+.media-play-icon,
+.replay-video-play {
+    position: absolute;
+    top: 87px;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: rgba(129, 57, 245, .9);
+    color: white;
+    font-size: 20px;
+    pointer-events: none;
+}
+
+/* Lataa tiedosto -painike */
+
+.media-download {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    align-self: flex-start;
+    margin-top: 8px;
+    padding: 10px 16px;
+    border: 1px solid var(--purple);
+    border-radius: 7px;
+    background: var(--purple);
+    color: white;
+    font-size: 13px;
+    font-weight: 700;
+    text-decoration: none;
+    transition: background .2s ease, border-color .2s ease;
+}
+
+.media-download:hover {
+    background: var(--purple2);
+    border-color: var(--purple2);
+}
+
+/* Mediakorttien otsikkotietojen tasaus */
+
+#selected-product {
+    margin-top: 0;
+}
+
+
+/* Videon play-kuvake */
+
+.media-play-icon {
+    position: absolute;
+    top: 87px;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: rgba(11, 16, 34, 0.8);
+    color: #ffffff;
+    font-size: 20px;
+    pointer-events: none;
+}
+
+/* Lataa tiedosto -painike */
+
+.media-download {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    align-self: flex-start;
+    margin-top: 8px;
+    padding: 10px 16px;
+    border: 1px solid #8139f5;
+    border-radius: 7px;
+    background: #8139f5;
+    color: #ffffff;
+    font-size: 13px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: background 0.2s ease, border-color 0.2s ease;
+}
+
+.media-download:hover {
+    background: #a06aff;
+    border-color: #a06aff;
+}
+
+/* Mediakorttien otsikkotietojen tasaus */
+
+#selected-product {
+    margin-top: 0;
 }

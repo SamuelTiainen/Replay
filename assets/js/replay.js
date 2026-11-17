@@ -6,6 +6,7 @@ let athletes = [];
 // Ostoskorin tiedot
 const MEDIA_PRICE = 10;
 let cartItems = [];
+const PURCHASE_KEY = "replay-purchase";
 
 const euroFormat = new Intl.NumberFormat("fi-FI", {
     style: "currency",
@@ -299,6 +300,40 @@ function renderCart() {
 
     const total = cartItems.length * MEDIA_PRICE;
     totalElement.textContent = euroFormat.format(total);
+
+    const checkoutButton = document.getElementById("replay-checkout");
+
+if (checkoutButton) {
+    checkoutButton.disabled = cartItems.length === 0;
+}
+}
+
+// Simuloidaan ostotapahtuma ja siirrytään Oma media -sivulle
+function completePurchase() {
+    if (cartItems.length === 0) {
+        alert("Ostoskorisi on tyhjä.");
+        return;
+    }
+
+    const eventSearch = document.getElementById("event-search");
+    const athleteSearch = document.getElementById("athlete-search");
+
+    const purchase = {
+        eventId: eventSearch.value,
+        eventName: eventSearch.selectedOptions[0].textContent,
+        athleteName: athleteSearch.value.trim(),
+        items: cartItems
+    };
+
+    try {
+        localStorage.setItem(PURCHASE_KEY, JSON.stringify(purchase));
+
+        window.location.href = "media.html";
+
+    } catch (error) {
+        console.error("Ostotietojen tallennus epäonnistui:", error);
+        alert("Ostotietojen tallennus epäonnistui.");
+    }
 }
 
 
@@ -446,7 +481,11 @@ grid.appendChild(card);
 
 // Sivun tapahtumat
 document.addEventListener("DOMContentLoaded", () => {
-        renderCart();
+    const checkoutButton = document.getElementById("replay-checkout");
+
+    checkoutButton.addEventListener("click", completePurchase);
+
+    renderCart();
     const eventSearch = document.getElementById("event-search");
     const athleteSearch = document.getElementById("athlete-search");
 
