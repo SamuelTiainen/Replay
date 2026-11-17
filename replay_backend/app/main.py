@@ -8,8 +8,9 @@ import sqlite3
 import threading
 import uuid
 from contextlib import asynccontextmanager
-from datetime import datetime, timezone
+from datetime import date, datetime, timezone
 from pathlib import Path
+from pydantic import BaseModel
 
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
@@ -37,10 +38,10 @@ MAX_FILE_BYTES = 500 * 1024 * 1024
 POLL_SECONDS = 2
 STOP = threading.Event()
 
-
 def connect():
     db = sqlite3.connect(DB, timeout=30)
     db.row_factory = sqlite3.Row
+    db.execute("PRAGMA foreign_keys = ON")
     return db
 
 
@@ -63,6 +64,19 @@ def setup():
                 size_bytes INTEGER NOT NULL
             )
         """)
+
+        db.execute("""
+            CREATE TABLE IF NOT EXISTS events (
+                id TEXT PRIMARY KEY,
+                name TEXT NOT NULL UNIQUE,
+                event_date TEXT,
+                created_at TEXT NOT NULL
+            )
+        """)
+
+        # Muut kolme CREATE TABLE -komentoa tulevat tähän
+        # samalla sisennyksellä kuin events-komento.
+
         db.commit()
 
     print("[REPLAY] ROOT:", ROOT, flush=True)
@@ -375,6 +389,54 @@ def health():
         "mode": "local-demo"
     }
 
+@app.get("/api/events")
+def get_events():
+    with connect() as db:
+        rows = db.execute(
+            "SELECT id, name, event_date FROM events ORDER BY event_date DESC"
+        ).fetchall()
+
+    return {
+        "events": [dict(row) for row in rows]
+    }
+class EventCreate(BaseModel):
+    name: str
+    event_date: date | None = None
+
+
+@app.post("/api/events")
+def create_event(event: EventCreate):
+    name = event.name.strip()
+
+    if not name:
+        raise HTTPException(400, "Tapahtuman nimi puuttuu.")
+
+    event_id = uuid.uuid4().hex
+    created_at = datetime.now(timezone.utc).isoformat()
+
+    try:
+        with connect() as db:
+            db.execute(
+                """
+                INSERT INTO events (id, name, event_date, created_at)
+                VALUES (?, ?, ?, ?)
+                """,
+                (
+                    event_id,
+                    name,
+                    event.event_date.isoformat() if event.event_date else None,
+                    created_at
+                )
+            )
+
+    except sqlite3.IntegrityError:
+        raise HTTPException(409, "Tämän niminen tapahtuma on jo olemassa.")
+
+    return {
+        "id": event_id,
+        "name": name,
+        "event_date": event.event_date.isoformat() if event.event_date else None
+    }
 
 @app.get("/api/manifest")
 def manifest():
