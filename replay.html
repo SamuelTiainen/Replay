@@ -6,77 +6,173 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>Striimaamo</title>
+    <title>Striimaamo Replay</title>
 
     <link rel="stylesheet" href="assets/style.css">
 
     <script src="assets/js/layout.js" defer></script>
+    <script src="assets/js/replay.js" defer></script>
 </head>
 
 <body>
+
     <div id="header-placeholder"></div>
 
-<main id="main">
+    <main id="main">
 
-    <section class="media-page">
+        <section class="replay-page">
 
-        <div class="media-header">
-            <h1 class="replay-title">Replay</h1>
-        </div>
+            <!-- Sivun esittelytekstit -->
+            <div class="replay-hero">
 
-    <div class="form-card">
+                <p class="replay-eyebrow">
+                    STRIIMAAMO REPLAY · KEHITTEILLÄ
+                </p>
 
-        <form action="media.html" method="GET">
+                <h1>
+                    Älä anna hetken
+                    <span>kadota.</span>
+                </h1>
 
-            <!-- Tapahtuma -->
-            <div class="form-group">
-                <label for="fname">Tapahtuma</label>
-                <input type="text" id="fname" name="tapahtuma" required>
+                <p class="replay-lead">
+                    Striimaamo Replay kokoaa
+                    tapahtumien videot, kuvat ja parhaat suoritukset
+                    löydettäviksi yhteen paikkaan.
+                </p>
+
             </div>
 
-            <!-- Urheilija -->
-            <div class="form-group">
-                <label for="lname">Urheilija</label>
-                <input type="text" id="lname" name="urheilija" required>
-            </div>
+            <!-- Replay-sovelluksen päälaatikko -->
+            <section class="replay-workspace">
 
-            <h3>Valitse tuote:</h3>
+                <div class="replay-workspace-header">
+                    <div class="replay-brand-label">
+                        <span class="replay-status-dot"></span>
+                        STRIIMAAMO REPLAY
+                    </div>
 
-            <!-- Tuotteet -->
-            <div class="product-options">
-                <label class="radio-option">
-                    <input type="radio" name="tuote" value="kuva" required>
-                    1 Kuva 10€
-                </label>
+                    <span class="replay-preview-label">
+                        GITHUB PROJEKTIN REPLAY NÄKYMÄ
+                    </span>
+                </div>
 
-                <label class="radio-option">
-                    <input type="radio" name="tuote" value="video">
-                    1 Video 10€
-                </label>
-                <label class="radio-option">
-                    <input type="radio" name="tuote" value="kuva_video">
-                    1 Kuva + 1 video 20€
-                </label>
+                <div class="replay-workspace-content">
 
-                <label class="radio-option">
-                    <input type="radio" name="tuote" value="2kuvaa_2videota">
-                    2 kuvaa + 2 videota 30€
-                </label>
-            </div>
+                    <!-- FIND -->
+                    <section class="replay-panel replay-find">
 
-            <button type="submit" class="btn btn-primary nav-cta">
-    Osta
-</button>
+                        <h2>ETSI</h2>
 
-        </form>
+                        <p class="replay-panel-description">
+                            Etsi tapahtuma ja osallistuja
+                        </p>
 
-    </div>
-    </section>
+                        <div class="replay-field">
+                            <label for="event-search">Tapahtuma</label>
 
-</main>
+                            <select id="event-search">
+                                <option value="">Valitse tapahtuma</option>
+                            </select>
+                        </div>
 
+                        <div class="replay-field">
+                            <label for="athlete-search">Osallistuja</label>
+
+                            <input
+                                type="text"
+                                id="athlete-search"
+                                placeholder="Kirjoita osallistujan nimi"
+                            >
+                        </div>
+
+                        <div id="athlete-results" class="athlete-results">
+                            <p>Valitse ensin tapahtuma.</p>
+                        </div>
+
+                    </section>
+
+                    <!-- WATCH -->
+                    <section class="replay-panel replay-watch">
+
+                        <h2>ESIKATSELU</h2>
+
+                        <p class="replay-panel-description">
+                            Katso omat kuvasi ja videosi
+                        </p>
+
+                        <div class="replay-media-area">
+
+                            <div class="replay-media-empty">
+                                <span class="replay-play-icon">▶</span>
+
+                                <h3>YOUR MOMENT.</h3>
+                                <h3>ON REPLAY.</h3>
+
+                                <p>
+                                    Valitse ensin tapahtuma ja urheilija,
+                                    niin löydät heihin liittyvän median.
+                                </p>
+                            </div>
+
+                            <div
+                                id="replay-media-grid"
+                                class="replay-media-grid"
+                            >
+                                <!-- Mediaesikatselukortit lisätään tähän -->
+                            </div>
+
+                        </div>
+
+                    </section>
+
+                    <!-- KEEP -->
+                    <section class="replay-panel replay-keep">
+
+                        <h2>TALLENNA</h2>
+
+                        <p class="replay-panel-description">
+                            Valitse ja säilytä omat hetkesi
+                        </p>
+
+                        <div class="replay-cart">
+
+                            <h3>Ostoskori</h3>
+
+                            <div
+                                id="replay-cart-items"
+                                class="replay-cart-items"
+                            >
+                                <p>Ei vielä valittuja medioita.</p>
+                            </div>
+
+                            <div class="replay-cart-total">
+                                <span>Yhteensä</span>
+                                <strong id="replay-cart-total">0,00 €</strong>
+                            </div>
+
+                            <button
+                                type="button"
+                                id="replay-checkout"
+                                class="btn btn-primary replay-checkout"
+                                disabled
+                            >
+                                Jatka ostamaan
+                            </button>
+
+                        </div>
+
+                    </section>
+
+                </div>
+
+            </section>
+
+        </section>
+
+    </main>
 
     <div id="footer-placeholder"></div>
 
 </body>
 </html>
+
